@@ -1,0 +1,21 @@
+[2025-09-18T06:05:59.916+0000] {processor.py:161} INFO - Started process (PID=173) to work on /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:05:59.917+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/faker_pipeline.py for tasks to queue
+[2025-09-18T06:05:59.920+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:05:59.920+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:05:59.942+0000] {processor.py:840} INFO - DAG(s) 'faker_pipeline' retrieved from /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:05:59.974+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:05:59.974+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-09-18T06:05:59.998+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:05:59.998+0000] {dag.py:3954} INFO - Setting next_dagrun for faker_pipeline to 2025-09-17 00:00:00+00:00, run_after=2025-09-18 00:00:00+00:00
+[2025-09-18T06:06:00.018+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/faker_pipeline.py took 0.109 seconds
+[2025-09-18T06:06:30.411+0000] {processor.py:161} INFO - Started process (PID=178) to work on /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:06:30.412+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/faker_pipeline.py for tasks to queue
+[2025-09-18T06:06:30.414+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:06:30.414+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:06:30.440+0000] {processor.py:840} INFO - DAG(s) 'faker_pipeline' retrieved from /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:06:30.565+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:06:30.565+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-09-18T06:06:30.586+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:06:30.586+0000] {dag.py:3954} INFO - Setting next_dagrun for faker_pipeline to 2025-09-17 00:00:00+00:00, run_after=2025-09-18 00:00:00+00:00
+[2025-09-18T06:06:30.606+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/faker_pipeline.py took 0.202 seconds
+[2025-09-18T06:07:01.077+0000] {processor.py:161} INFO - Started process (PID=183) to work on /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:07:01.079+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/faker_pipeline.py for tasks to queue
+[2025-09-18T06:07:01.081+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:07:01.081+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:07:01.103+0000] {processor.py:840} INFO - DAG(s) 'faker_pipeline' retrieved from /opt/airflow/dags/faker_pipeline.py
+[2025-09-18T06:07:01.130+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:07:01.130+0000] {dag.py:3096} INFO - Sync 1 DAGs
+[2025-09-18T06:07:01.151+0000] {logging_mixin.py:188} INFO - [2025-09-18T06:07:01.151+0000] {dag.py:3954} INFO - Setting next_dagrun for faker_pipeline to 2025-09-17 00:00:00+00:00, run_after=2025-09-18 00:00:00+00:00
+[2025-09-18T06:07:01.174+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/faker_pipeline.py took 0.103 seconds

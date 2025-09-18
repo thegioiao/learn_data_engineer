@@ -1,0 +1,148 @@
+version: "3.8"
+
+services:
+  # ========== ZOOKEEPER & KAFKA ==========
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - ecom-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.1
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    networks:
+      - ecom-net
+
+  # ========== SPARK MASTER & WORKER ==========
+  spark-master:
+    image: bitnami/spark:3
+    environment:
+      - SPARK_MODE=master
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "8080:8080"   # Spark master web UI
+    volumes:
+      - ../spark_jobs:/opt/spark_jobs
+    networks:
+      - ecom-net
+
+  spark-worker:
+    image: bitnami/spark:3
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_RPC_AUTHENTICATION_ENABLED=no
+      - SPARK_RPC_ENCRYPTION_ENABLED=no
+      - SPARK_SSL_ENABLED=no
+    ports:
+      - "8081:8081"   # Spark worker UI
+    networks:
+      - ecom-net
+
+  # ========== POSTGRES (DW) ==========
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: dw_user
+      POSTGRES_PASSWORD: dw_pass
+      POSTGRES_DB: ecom_dw
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - ecom-net
+
+  # ========== AIRFLOW (uses official apache/airflow image) ==========
+  airflow-postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow_pgdata:/var/lib/postgresql/data
+    networks:
+      - ecom-net
+
+  airflow:
+    image: apache/airflow:2.8.3
+    depends_on:
+      - airflow-postgres
+      - kafka
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      _PIP_ADDITIONAL_REQUIREMENTS: "psycopg2-binary==2.9.6"
+    volumes:
+      - ../airflow_dags:/opt/airflow/dags
+      - ../spark_jobs:/opt/spark_jobs
+    ports:
+      - "8082:8080"
+    command: ["webserver"]
+    networks:
+      - ecom-net
+
+  airflow-scheduler:
+    image: apache/airflow:2.8.3
+    depends_on:
+      - airflow
+      - airflow-postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres:5432/airflow
+    volumes:
+      - ../airflow_dags:/opt/airflow/dags
+      - ../spark_jobs:/opt/spark_jobs
+    command: ["scheduler"]
+    networks:
+      - ecom-net
+
+  # ========== UTILITY: spark-submit & tools (for convenience) ==========
+  utils:
+    image: python:3.10-slim
+    depends_on:
+      - kafka
+      - spark-master
+      - spark-worker
+      - postgres
+    volumes:
+      - ../kafka:/opt/kafka
+      - ../spark_jobs:/opt/spark_jobs
+      - ../data:/opt/data
+    working_dir: /opt
+    command: ["sleep", "infinity"]
+    networks:
+      - ecom-net
+
+networks:
+  ecom-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+  airflow_pgdata:
